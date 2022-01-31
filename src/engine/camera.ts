@@ -52,7 +52,7 @@ export class Camera extends GameObject {
     const d = 50
     z = z * fov
     x = (x * d) / z
-    y = (y * d) / z
+    y = -(y * d) / z
     return [x + this.canvas.width / 2, y + this.canvas.height / 2]
   }
 }

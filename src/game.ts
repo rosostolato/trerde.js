@@ -1,9 +1,14 @@
 import { Camera, Cube, KeyListener, Vector3 } from './engine'
 
+import { Plane } from './engine/shapes/plane'
+
 export class Game {
   private readonly camera = new Camera(this.canvas, this.ctx)
   private readonly keyListener = new KeyListener()
+
+  // Shapes
   private readonly cube = new Cube()
+  private readonly plane = new Plane()
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -15,10 +20,12 @@ export class Game {
 
   startScene(): void {
     this.camera.position = new Vector3(0, 0, 0)
+    this.plane.position = new Vector3(0, -2, 10)
+    this.plane.scale = new Vector3(10, 1, 10)
     this.cube.position = new Vector3(0, 0, 10)
 
     setInterval(() => {
-      this.cube.rotate(new Vector3(2, -2, 2))
+      this.cube.rotate(new Vector3(2, 2, 2))
     }, 1000 / 60)
   }
 
@@ -31,6 +38,7 @@ export class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
 
     // draw
+    this.camera.drawGameObject(this.plane)
     this.camera.drawGameObject(this.cube)
 
     // loop

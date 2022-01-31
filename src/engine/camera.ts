@@ -15,21 +15,34 @@ export class Camera extends GameObject {
   drawGameObject(gameObject: GameObject): void {
     const delta = gameObject.position.add(this.position.multiply(-1))
 
-    gameObject.faces.forEach(face => {
-      const [origin, ...points] = face.vertices
-        .map(vertex => vertex.add(delta))
-        .map(vertex => vertex.rotate(this.rotation))
-        .map(vertex => this.project3dTo2d(vertex))
+    gameObject
+      .getFaces()
+      .map(face => ({
+        color: face.color,
+        vertices: face.vertices
+          .map(vertex => vertex.add(delta))
+          .map(vertex => vertex.rotate(this.rotation))
+          .filter(vertex => vertex.z > 0),
+      }))
+      .filter(face => face.vertices.length > 1)
+      .sort((a, b) => {
+        const azmax = Math.max(...a.vertices.map(v => v.z))
+        const bzmax = Math.max(...b.vertices.map(v => v.z))
+        return azmax > bzmax ? -1 : 1
+      })
+      .forEach(face => {
+        const [origin, ...points] = face.vertices.map(vertex =>
+          this.project3dTo2d(vertex)
+        )
 
-      this.ctx.beginPath()
-      this.ctx.moveTo(origin[0], origin[1])
-      points.forEach(v => this.ctx.lineTo(v[0], v[1]))
-      this.ctx.closePath()
+        this.ctx.beginPath()
+        this.ctx.moveTo(origin[0], origin[1])
+        points.forEach(v => this.ctx.lineTo(v[0], v[1]))
+        this.ctx.closePath()
 
-      this.ctx.strokeStyle = face.color
-      this.ctx.lineWidth = 1
-      this.ctx.stroke()
-    })
+        this.ctx.fillStyle = face.color
+        this.ctx.fill()
+      })
   }
 
   /** Project a 3d vertex to 2d plane. */

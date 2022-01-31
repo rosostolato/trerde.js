@@ -1,14 +1,14 @@
-import { Face } from './face.interface'
+import { Face } from '../interfaces/face.interface'
 import { GameObject } from '../game-object'
 import { Vector3 } from '../vector3'
 
 let cubeindex = 0
 
 export class Cube extends GameObject {
-  readonly faces: Face[] = [
+  protected readonly faces: Face[] = [
     {
       // top (y=1)
-      color: '#ff0000',
+      color: '#0000ff',
       vertices: [
         new Vector3(1, 1, -1),
         new Vector3(-1, 1, -1),
@@ -18,7 +18,7 @@ export class Cube extends GameObject {
     },
     {
       // bottom (y=-1)
-      color: '#ff0000',
+      color: '#0000ff',
       vertices: [
         new Vector3(1, -1, 1),
         new Vector3(-1, -1, 1),
@@ -48,7 +48,7 @@ export class Cube extends GameObject {
     },
     {
       // left (x=-1)
-      color: '#ff0000',
+      color: '#00ff00',
       vertices: [
         new Vector3(-1, 1, 1),
         new Vector3(-1, 1, -1),
@@ -58,7 +58,7 @@ export class Cube extends GameObject {
     },
     {
       // right (x=1)
-      color: '#ff0000',
+      color: '#00ff00',
       vertices: [
         new Vector3(1, 1, -1),
         new Vector3(1, 1, 1),

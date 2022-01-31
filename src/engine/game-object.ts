@@ -1,9 +1,7 @@
-import { Face } from './shapes/face.interface'
+import { Face } from './interfaces/face.interface'
 import { Vector3 } from './vector3'
 
 export abstract class GameObject {
-  faces: Face[] = []
-
   /** Game object name. */
   name: string
 
@@ -12,6 +10,8 @@ export abstract class GameObject {
 
   /** Game object rotation in euler angles. */
   rotation: Vector3
+
+  protected readonly faces: Face[] = []
 
   /**
    * Returns the forward vector based on rotation.
@@ -31,6 +31,13 @@ export abstract class GameObject {
     this.name = name
     this.position = position ?? Vector3.zero
     this.rotation = rotation ?? Vector3.zero
+  }
+
+  getFaces(): Face[] {
+    return this.faces.map(face => ({
+      color: face.color,
+      vertices: face.vertices.map(v => v.rotate(this.rotation)),
+    }))
   }
 
   /** Translate game object. */

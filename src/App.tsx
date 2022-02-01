@@ -10,13 +10,13 @@ import {
 } from './engine'
 
 const renderer = new Renderer3D(1280, 720)
+const camera = new Camera(40, 1280 / 720)
 const scene = new Scene()
-const camera = new Camera()
 const keyListener = new KeyListener()
 
 // Shapes
-const cube = new Cube()
 const plane = new Plane()
+const cube = new Cube()
 scene.add(plane, cube)
 
 camera.position = new Vector3(0, 0, -11)
@@ -24,7 +24,7 @@ plane.position = new Vector3(0, -2, 0)
 plane.scale = new Vector3(10, 1, 10)
 
 setInterval(() => {
-  cube.rotate(new Vector3(2, 2, 2))
+  cube.rotate(new Vector3(2, -2, 2))
 }, 1000 / 60)
 
 const actions = () => {
@@ -54,14 +54,9 @@ const actions = () => {
 }
 
 const render = () => {
-  // perform actions
-  actions()
-
-  // render
-  renderer.render(scene, camera)
-
-  // loop
   requestAnimationFrame(render)
+  actions()
+  renderer.render(scene, camera)
 }
 
 const App: React.FC = () => {

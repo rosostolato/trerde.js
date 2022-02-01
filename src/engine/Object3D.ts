@@ -53,4 +53,9 @@ export abstract class Object3D {
   resize(scale: Vector3): void {
     this.scale = scale
   }
+
+  distantTo(point: Vector3): number {
+    const { x, y, z } = point.sub(this.position)
+    return Math.sqrt(x ** x + y ** y + z ** z)
+  }
 }

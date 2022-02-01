@@ -27,38 +27,48 @@ export class Renderer3D {
     // draw objects
     scene.shapeObjects.forEach(obj => this.drawObject(obj, camera))
 
+    // debug: draw camera position
     this.ctx.font = '18px Arial'
     this.ctx.fillStyle = '#fff'
-    this.ctx.fillText(camera.position.toString(), 10, 20)
+    this.ctx.fillText(`Camera (${camera.position})`, 10, 20)
   }
 
   /** Draw a 3D object in view. */
   private drawObject(object: Shape, camera: Camera): void {
-    const delta = object.position.sub(camera.position)
-
     object
       .getFaces()
+      .sort((f1, f2) => {
+        const getCentroid = (f: typeof f1) =>
+          f.vertices
+            .reduce((sum, v) => sum.add(v), Vector3.zero)
+            .multiply(1 / f.vertices.length)
+        const c1 = getCentroid(f1)
+        const c2 = getCentroid(f2)
+        const dist1 = camera.position.distanceTo(c1)
+        const dist2 = camera.position.distanceTo(c2)
+        return dist1 > dist2 ? -1 : 1
+      })
       .map(face => ({
         color: face.color,
-        vertices: face.vertices.map(v =>
-          new Vector3(v).add(delta).rotate(camera.rotation)
-        ),
-        // .filter(v => v.z > 0),
+        vertices: face.vertices
+          .map(v =>
+            camera.project3D(
+              new Vector3(v)
+                .add(object.position.sub(camera.position))
+                .rotate(camera.rotation),
+              this.canvas.width,
+              this.canvas.height
+            )
+          )
+          .filter(v => v.z > 0),
       }))
-      // .filter(face => face.vertices.length > 1)
-      .sort((a, b) => {
-        const azmax = Math.max(...a.vertices.map(v => v.z))
-        const bzmax = Math.max(...b.vertices.map(v => v.z))
-        return azmax > bzmax ? -1 : 1
-      })
+      .filter(face => face.vertices.length > 2)
       .forEach(face => {
-        const [origin, ...points] = face.vertices.map(point =>
-          camera.project3dTo2d(point, this.canvas.width, this.canvas.height)
-        )
+        const [origin, ...points] = face.vertices
 
         this.ctx.beginPath()
-        this.ctx.moveTo(origin[0], origin[1])
-        points.forEach(v => this.ctx.lineTo(v[0], v[1]))
+        this.ctx.moveTo(origin.x, origin.y)
+        points.forEach(v => this.ctx.lineTo(v.x, v.y))
         this.ctx.closePath()
 
         this.ctx.fillStyle = face.color

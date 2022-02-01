@@ -1,41 +1,43 @@
-export class Vector3 {
+import { Vector3Like, Vector3obj } from '../interfaces/vector3-like.interface'
+
+export class Vector3 implements Vector3obj {
   readonly x: number
   readonly y: number
   readonly z: number
 
   constructor(x: number, y: number, z: number)
-  constructor(point: [number, number, number])
-  constructor(xorp: number | number[], y?: number, z?: number) {
-    if (Array.isArray(xorp)) {
-      const [x, y, z] = xorp
+  constructor(vector: Vector3Like)
+  constructor(xpv: number | Vector3Like, y?: number, z?: number) {
+    if (Array.isArray(xpv)) {
+      const [x, y, z] = xpv
       this.x = x
       this.y = y
       this.z = z
+    } else if (typeof xpv === 'object') {
+      this.x = xpv.x
+      this.y = xpv.y
+      this.z = xpv.z
     } else {
-      this.x = xorp
+      this.x = xpv
       this.y = y!
       this.z = z!
     }
   }
 
-  add(point: Vector3): Vector3 {
-    return new Vector3(this.x + point.x, this.y + point.y, this.z + point.z)
+  add(vector: Vector3): Vector3 {
+    return new Vector3(this.x + vector.x, this.y + vector.y, this.z + vector.z)
   }
 
-  multiply(mult: number): Vector3
-  multiply(point: Vector3): Vector3
-  multiply(pointOrMult: Vector3 | number): Vector3 {
-    return pointOrMult instanceof Vector3
-      ? new Vector3(
-          this.x * pointOrMult.x,
-          this.y * pointOrMult.y,
-          this.z * pointOrMult.z
-        )
-      : new Vector3(
-          this.x * pointOrMult,
-          this.y * pointOrMult,
-          this.z * pointOrMult
-        )
+  sub(vector: Vector3): Vector3 {
+    return new Vector3(this.x - vector.x, this.y - vector.y, this.z - vector.z)
+  }
+
+  multiply(module: number): Vector3
+  multiply(vector: Vector3): Vector3
+  multiply(morv: Vector3 | number): Vector3 {
+    return morv instanceof Vector3
+      ? new Vector3(this.x * morv.x, this.y * morv.y, this.z * morv.z)
+      : new Vector3(this.x * morv, this.y * morv, this.z * morv)
   }
 
   rotate(rotation: Vector3): Vector3 {
@@ -78,6 +80,11 @@ export class Vector3 {
     result = matMultiply(ry, result)
     result = matMultiply(rz, result)
     return new Vector3(result[0][0], result[1][0], result[2][0])
+  }
+
+  distanceTo(point: Vector3): number {
+    const { x, y, z } = this.sub(point)
+    return Math.sqrt(x * x + y * y + z * z)
   }
 
   toString(): string {

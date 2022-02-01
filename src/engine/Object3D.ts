@@ -1,20 +1,17 @@
-import { Face } from './interfaces/face.interface'
-import { Vector3 } from './vector3'
+import { Vector3 } from './math/vector3'
 
-export abstract class GameObject {
-  /** Game object name. */
+export abstract class Object3D {
+  /** Object name. */
   name: string
 
-  /** Game object position. */
+  /** Object position. */
   position: Vector3
 
-  /** Game object rotation in euler angles. */
+  /** Object rotation in euler angles. */
   rotation: Vector3
 
-  /** Game object scale. */
+  /** Object scale. */
   scale: Vector3
-
-  protected readonly faces: Face[] = []
 
   /**
    * Returns the forward vector based on rotation.
@@ -42,24 +39,17 @@ export abstract class GameObject {
     this.scale = scale ?? Vector3.one
   }
 
-  getFaces(): Face[] {
-    return this.faces.map(face => ({
-      color: face.color,
-      vertices: face.vertices
-        .map(v => v.multiply(this.scale))
-        .map(v => v.rotate(this.rotation)),
-    }))
-  }
-
-  /** Translate game object. */
+  /** Translate object. */
   translate(delta: Vector3): void {
     this.position = this.position.add(delta)
   }
 
+  /** Rotate object. */
   rotate(delta: Vector3): void {
     this.rotation = this.rotation.add(delta)
   }
 
+  /** Resize object. */
   resize(scale: Vector3): void {
     this.scale = scale
   }

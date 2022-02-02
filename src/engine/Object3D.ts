@@ -1,16 +1,9 @@
 import { Vector3 } from './math/vector3'
 
 export abstract class Object3D {
-  /** Object name. */
-  name: string
-
-  /** Object position. */
+  id: string
   position: Vector3
-
-  /** Object rotation in euler angles. */
   rotation: Vector3
-
-  /** Object scale. */
   scale: Vector3
 
   /**
@@ -19,37 +12,38 @@ export abstract class Object3D {
    */
   get forward(): Vector3 {
     const d2r = (degress: number) => degress * (Math.PI / 180)
-    const rot = new Vector3(
-      d2r(this.rotation.x),
-      d2r(this.rotation.y),
-      d2r(this.rotation.z)
-    )
-    return new Vector3(-Math.sin(rot.y), 0, Math.cos(rot.y))
+    // const x = d2r(this.rotation.x)
+    const y = d2r(this.rotation.y)
+    // const z = d2r(this.rotation.z)
+    return new Vector3(-Math.sin(y), 0, Math.cos(y))
   }
 
   constructor(
-    name: string,
+    id: string,
     position?: Vector3,
     rotation?: Vector3,
     scale?: Vector3
   ) {
-    this.name = name
+    this.id = id
     this.position = position ?? Vector3.zero
     this.rotation = rotation ?? Vector3.zero
     this.scale = scale ?? Vector3.one
   }
 
-  /** Translate object. */
   translate(delta: Vector3): void {
     this.position = this.position.add(delta)
   }
 
-  /** Rotate object. */
-  rotate(delta: Vector3): void {
-    this.rotation = this.rotation.add(delta)
+  rotate(x: number, y: number, z: number): void
+  rotate(euler: Vector3): void
+  rotate(xOrEuler: number | Vector3, y?: number, z?: number): void {
+    const euler =
+      xOrEuler instanceof Vector3
+        ? xOrEuler
+        : new Vector3(xOrEuler, y ?? 0, z ?? 0)
+    this.rotation = this.rotation.add(euler)
   }
 
-  /** Resize object. */
   resize(scale: Vector3): void {
     this.scale = scale
   }

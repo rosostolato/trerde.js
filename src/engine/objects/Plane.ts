@@ -5,7 +5,7 @@ let planeindex = 0
 
 export class Plane extends Shape {
   constructor(xcount = 10, ycount = 10) {
-    super(`Plane ${++planeindex}`)
+    super(`plane-${String(++planeindex).padStart(2, '0')}`)
 
     for (let x = 0; x < xcount; x++) {
       for (let y = 0; y < ycount; y++) {

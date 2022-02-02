@@ -67,6 +67,6 @@ export class Cube extends Shape {
     },
   ]
   constructor() {
-    super(`Cube ${++cubeindex}`)
+    super(`cube-${String(++cubeindex).padStart(2, '0')}`)
   }
 }

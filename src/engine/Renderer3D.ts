@@ -4,17 +4,16 @@ import { Shape } from './objects'
 import { Scene } from './Scene'
 
 export class Renderer3D {
-  readonly canvas: HTMLCanvasElement
-
   readonly ctx: CanvasRenderingContext2D
+  height: number
+  width: number
 
-  constructor(width: number, height: number) {
-    this.canvas = document.createElement('canvas')
-    this.canvas.setAttribute('width', String(width))
-    this.canvas.setAttribute('height', String(height))
-    const ctx = this.canvas.getContext('2d')
+  constructor(canvas: HTMLCanvasElement) {
+    this.width = canvas.width
+    this.height = canvas.height
+    const ctx = canvas.getContext('2d')
     if (ctx === null) {
-      throw new Error('Canvas getContext error!')
+      throw new Error("Couldn't get 2d context from canvas")
     }
     this.ctx = ctx
   }
@@ -22,7 +21,7 @@ export class Renderer3D {
   render(scene: Scene, camera: Camera): void {
     // clear
     this.ctx.fillStyle = 'black'
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.fillRect(0, 0, this.width, this.height)
 
     // draw objects
     scene.shapeObjects.forEach(obj => this.drawObject(obj, camera))
@@ -30,7 +29,8 @@ export class Renderer3D {
     // debug: draw camera position
     this.ctx.font = '18px Arial'
     this.ctx.fillStyle = '#fff'
-    this.ctx.fillText(`Camera (${camera.position})`, 10, 20)
+    this.ctx.fillText(`Camera position ${camera.position}`, 10, 20)
+    this.ctx.fillText(`Camera rotation ${camera.rotation}`, 10, 50)
   }
 
   /** Draw a 3D object in view. */
@@ -48,31 +48,22 @@ export class Renderer3D {
         const dist2 = camera.position.distanceTo(c2)
         return dist1 > dist2 ? -1 : 1
       })
-      .map(face => ({
-        color: face.color,
-        vertices: face.vertices
-          .map(v =>
-            camera.project3D(
-              new Vector3(v)
-                .add(object.position.sub(camera.position))
-                .rotate(camera.rotation),
-              this.canvas.width,
-              this.canvas.height
-            )
-          )
-          .filter(v => v.z > 0),
-      }))
-      .filter(face => face.vertices.length > 2)
       .forEach(face => {
-        const [origin, ...points] = face.vertices
+        const vertices = face.vertices
+          .map(vertex => camera.project3D(vertex, this.width, this.height))
+          .filter(v => v.z > 0)
 
-        this.ctx.beginPath()
-        this.ctx.moveTo(origin.x, origin.y)
-        points.forEach(v => this.ctx.lineTo(v.x, v.y))
-        this.ctx.closePath()
+        if (vertices.length > 2) {
+          const [origin, ...points] = vertices
 
-        this.ctx.fillStyle = face.color
-        this.ctx.fill()
+          this.ctx.beginPath()
+          this.ctx.moveTo(origin.x, origin.y)
+          points.forEach(v => this.ctx.lineTo(v.x, v.y))
+          this.ctx.closePath()
+
+          this.ctx.fillStyle = face.color
+          this.ctx.fill()
+        }
       })
   }
 }

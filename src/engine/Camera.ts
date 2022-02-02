@@ -4,17 +4,13 @@ import { Object3D } from './Object3D'
 let cameraindex = 0
 
 export class Camera extends Object3D {
-  constructor(
-    public fov = 50,
-    public aspect = 16 / 9,
-    public near = 0.1,
-    public far = 1000
-  ) {
-    super(`Camera ${++cameraindex}`)
+  constructor(public fov = 50, public near = 0.1, public far = 1000) {
+    super(`camera-${String(++cameraindex).padStart(2, '0')}`)
   }
 
   /** Project a 3d vertex to 2d plane. */
-  project3D(point: Vector3, width: number, height: number): Vector3 {
+  project3D(vertex: Vector3, width: number, height: number): Vector3 {
+    const d2r = (degress: number) => degress * (Math.PI / 180)
     const matMultiply = (a: number[][], b: number[][]) => {
       const aNumRows = a.length
       const aNumCols = a[0].length
@@ -31,11 +27,11 @@ export class Camera extends Object3D {
       }
       return m
     }
-    const d2r = (degress: number) => degress * (Math.PI / 180)
     const fov = 1 / Math.tan(d2r(this.fov / 2))
     const delta = this.far - this.near
+    const aspect = width / height
     const clipMat = [
-      [fov / this.aspect, 0, 0, 0],
+      [fov / aspect, 0, 0, 0],
       [0, fov, 0, 0],
       [
         0,
@@ -45,8 +41,10 @@ export class Camera extends Object3D {
       ],
       [0, 0, 1, 0],
     ]
-    const v3Mat = [[point.x], [point.y], [point.z], [1]]
-    const v2mat = matMultiply(clipMat, v3Mat)
+    const v2mat = matMultiply(
+      clipMat,
+      vertex.sub(this.position).rotate(this.rotation, 'ZYX').toMatrix4()
+    )
     const [[x], [y], , [w]] = v2mat
     return new Vector3(
       (x * width) / (2 * w) + width / 2,

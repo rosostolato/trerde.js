@@ -9,9 +9,8 @@ import {
   Vector3,
 } from './engine'
 
-const renderer = new Renderer3D(1280, 720)
-const camera = new Camera(40, 1280 / 720)
 const scene = new Scene()
+const camera = new Camera(50)
 const keyListener = new KeyListener()
 
 // Shapes
@@ -24,7 +23,7 @@ plane.position = new Vector3(0, -2, 0)
 plane.scale = new Vector3(10, 1, 10)
 
 setInterval(() => {
-  cube.rotate(new Vector3(2, -2, 2))
+  cube.rotate(2, -2, 2)
 }, 1000 / 60)
 
 const actions = () => {
@@ -37,41 +36,55 @@ const actions = () => {
     camera.translate(backward)
   }
   if (keyListener.isKeyDown('a')) {
-    const left = camera.forward.rotate(new Vector3(0, 90, 0)).multiply(-0.1)
+    const left = camera.forward.rotate(0, 90, 0).multiply(-0.1)
     camera.translate(left)
   }
   if (keyListener.isKeyDown('d')) {
-    const right = camera.forward.rotate(new Vector3(0, 90, 0)).multiply(0.1)
+    const right = camera.forward.rotate(0, 90, 0).multiply(0.1)
     camera.translate(right)
   }
 
+  if (keyListener.isKeyDown('ArrowUp')) {
+    camera.rotate(1, 0, 0)
+  }
+  if (keyListener.isKeyDown('ArrowDown')) {
+    camera.rotate(-1, 0, 0)
+  }
   if (keyListener.isKeyDown('ArrowLeft')) {
-    camera.rotate(new Vector3(0, 1, 0))
+    camera.rotate(0, 1, 0)
   }
   if (keyListener.isKeyDown('ArrowRight')) {
-    camera.rotate(new Vector3(0, -1, 0))
+    camera.rotate(0, -1, 0)
   }
-}
-
-const render = () => {
-  requestAnimationFrame(render)
-  actions()
-  renderer.render(scene, camera)
 }
 
 const App: React.FC = () => {
-  const canvas = useRef<HTMLDivElement>(null)
+  const canvas = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    render()
-
     if (canvas.current) {
-      canvas.current.innerHTML = ''
-      canvas.current.append(renderer.canvas)
+      const renderer = new Renderer3D(canvas.current)
+      const renderLoop = () => {
+        requestAnimationFrame(renderLoop)
+        actions()
+        renderer.render(scene, camera)
+      }
+      renderLoop()
+
+      const resizeCanvas = () => {
+        if (canvas.current) {
+          canvas.current.width = window.innerWidth
+          canvas.current.height = window.innerHeight
+          renderer.width = window.innerWidth
+          renderer.height = window.innerHeight
+        }
+      }
+      window.addEventListener('resize', resizeCanvas)
+      resizeCanvas()
     }
   }, [canvas])
 
-  return <div id="canvas" ref={canvas}></div>
+  return <canvas ref={canvas} width={1280} height={720}></canvas>
 }
 
 export default App

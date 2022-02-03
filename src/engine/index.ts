@@ -1,7 +1,0 @@
-export * from './Camera'
-export * from './geometries'
-export * from './InputListener'
-export * from './math'
-export * from './Renderer3D'
-export * from './Scene'
-export * from './TrerDe'

@@ -1,0 +1,16 @@
+{
+  "name": "trerdejs",
+  "version": "0.0.1",
+  "description": "3D engine for javascript",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": [
+    "3D",
+    "canvas"
+  ],
+  "author": "rosostolato",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.5.5"
+  }
+}

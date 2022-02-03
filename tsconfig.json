@@ -1,25 +1,19 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
+    "rootDir": "./",
+    "outDir": "out-tsc",
+    "target": "es2018",
+    "module": "esnext",
     "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "es2017",
-    "module": "es2020",
+    "esModuleInterop": true,
+    "noEmitOnError": false,
+    "strict": true,
     "lib": [
-      "es2020",
-      "dom"
-    ],
+      "dom",
+      "esnext"
+    ]
   },
+  "include": [
+    "./src/**/*.ts"
+  ]
 }

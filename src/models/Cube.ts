@@ -1,9 +1,9 @@
 import { Face } from "../interfaces/face.interface";
-import { Geometry3D } from "./Geometry3D";
+import { Model3D } from "./Model3D";
 
 let cubeindex = 0;
 
-export class Cube extends Geometry3D {
+export class Cube extends Model3D {
   override faces: Face[] = [
     {
       // top (y=1)

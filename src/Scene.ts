@@ -1,9 +1,9 @@
-import { Geometry3D } from './geometries'
+import { Model3D } from "./models";
 
 export class Scene {
-  readonly objects: Geometry3D[] = []
+  readonly objects: Model3D[] = [];
 
-  add(...objects: Geometry3D[]): void {
-    this.objects.push(...objects)
+  add(...objects: Model3D[]): void {
+    this.objects.push(...objects);
   }
 }

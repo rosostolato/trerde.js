@@ -1,4 +1,4 @@
-export class KeyListener {
+export class InputListener {
   private keys: Record<string, boolean> = {}
 
   constructor() {

@@ -1,14 +1,14 @@
 import { Camera } from './Camera'
+import { Geometry3D } from './geometries'
 import { Vector3 } from './math'
-import { Shape } from './objects'
 import { Scene } from './Scene'
 
-export class Renderer3D {
-  readonly ctx: CanvasRenderingContext2D
-  height: number
-  width: number
+export class TrerDe {
+  private readonly ctx: CanvasRenderingContext2D
+  private height: number
+  private width: number
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(private readonly canvas: HTMLCanvasElement) {
     this.width = canvas.width
     this.height = canvas.height
     const ctx = canvas.getContext('2d')
@@ -24,7 +24,7 @@ export class Renderer3D {
     this.ctx.fillRect(0, 0, this.width, this.height)
 
     // draw objects
-    scene.shapeObjects.forEach(obj => this.drawObject(obj, camera))
+    scene.objects.forEach(obj => this.drawObject(obj, camera))
 
     // debug: draw camera position
     this.ctx.font = '18px Arial'
@@ -33,8 +33,15 @@ export class Renderer3D {
     this.ctx.fillText(`Camera rotation ${camera.rotation}`, 10, 50)
   }
 
+  setScreenSize(width: number, height: number): void {
+    this.canvas.width = width
+    this.canvas.height = height
+    this.width = width
+    this.height = height
+  }
+
   /** Draw a 3D object in view. */
-  private drawObject(object: Shape, camera: Camera): void {
+  private drawObject(object: Geometry3D, camera: Camera): void {
     object
       .getFaces()
       .sort((f1, f2) => {

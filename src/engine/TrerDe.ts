@@ -1,4 +1,4 @@
-import { Vector3 } from './math/vector3'
+import { d2r, Vector3 } from './math'
 
 export abstract class Object3D {
   id: string
@@ -11,7 +11,6 @@ export abstract class Object3D {
    * TODO: fix logic.
    */
   get forward(): Vector3 {
-    const d2r = (degress: number) => degress * (Math.PI / 180)
     // const x = d2r(this.rotation.x)
     const y = d2r(this.rotation.y)
     // const z = d2r(this.rotation.z)

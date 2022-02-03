@@ -1,9 +1,9 @@
 import { Vector3Like } from '../interfaces/vector3-like.interface'
-import { Shape } from './Shape'
+import { Geometry3D } from './Geometry3D'
 
 let planeindex = 0
 
-export class Plane extends Shape {
+export class Plane extends Geometry3D {
   constructor(xcount = 10, ycount = 10) {
     super(`plane-${String(++planeindex).padStart(2, '0')}`)
 

@@ -2,18 +2,18 @@ import React, { useEffect, useRef } from 'react'
 import {
   Camera,
   Cube,
-  KeyListener,
+  InputListener,
   Plane,
-  Renderer3D,
   Scene,
+  TrerDe,
   Vector3,
 } from './engine'
 
 const scene = new Scene()
 const camera = new Camera(50)
-const keyListener = new KeyListener()
+const inputListener = new InputListener()
 
-// Shapes
+// Geometries
 const plane = new Plane()
 const cube = new Cube()
 scene.add(plane, cube)
@@ -27,33 +27,33 @@ setInterval(() => {
 }, 1000 / 60)
 
 const actions = () => {
-  if (keyListener.isKeyDown('w')) {
+  if (inputListener.isKeyDown('w')) {
     const forward = camera.forward.multiply(0.1)
     camera.translate(forward)
   }
-  if (keyListener.isKeyDown('s')) {
+  if (inputListener.isKeyDown('s')) {
     const backward = camera.forward.multiply(-0.1)
     camera.translate(backward)
   }
-  if (keyListener.isKeyDown('a')) {
+  if (inputListener.isKeyDown('a')) {
     const left = camera.forward.rotate(0, 90, 0).multiply(-0.1)
     camera.translate(left)
   }
-  if (keyListener.isKeyDown('d')) {
+  if (inputListener.isKeyDown('d')) {
     const right = camera.forward.rotate(0, 90, 0).multiply(0.1)
     camera.translate(right)
   }
 
-  if (keyListener.isKeyDown('ArrowUp')) {
+  if (inputListener.isKeyDown('ArrowUp')) {
     camera.rotate(1, 0, 0)
   }
-  if (keyListener.isKeyDown('ArrowDown')) {
+  if (inputListener.isKeyDown('ArrowDown')) {
     camera.rotate(-1, 0, 0)
   }
-  if (keyListener.isKeyDown('ArrowLeft')) {
+  if (inputListener.isKeyDown('ArrowLeft')) {
     camera.rotate(0, 1, 0)
   }
-  if (keyListener.isKeyDown('ArrowRight')) {
+  if (inputListener.isKeyDown('ArrowRight')) {
     camera.rotate(0, -1, 0)
   }
 }
@@ -63,24 +63,17 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (canvas.current) {
-      const renderer = new Renderer3D(canvas.current)
+      const trerde = new TrerDe(canvas.current)
+      const resizeCanvas = () =>
+        trerde.setScreenSize(window.innerWidth, window.innerHeight)
       const renderLoop = () => {
         requestAnimationFrame(renderLoop)
         actions()
-        renderer.render(scene, camera)
-      }
-      renderLoop()
-
-      const resizeCanvas = () => {
-        if (canvas.current) {
-          canvas.current.width = window.innerWidth
-          canvas.current.height = window.innerHeight
-          renderer.width = window.innerWidth
-          renderer.height = window.innerHeight
-        }
+        trerde.render(scene, camera)
       }
       window.addEventListener('resize', resizeCanvas)
       resizeCanvas()
+      renderLoop()
     }
   }, [canvas])
 

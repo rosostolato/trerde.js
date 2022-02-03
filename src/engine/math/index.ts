@@ -1,1 +1,3 @@
-export * from './vector3'
+export * from './Matrix'
+export * from './utils'
+export * from './Vector3'

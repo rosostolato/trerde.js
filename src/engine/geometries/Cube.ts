@@ -1,9 +1,9 @@
 import { Face } from '../interfaces/face.interface'
-import { Shape } from './Shape'
+import { Geometry3D } from './Geometry3D'
 
 let cubeindex = 0
 
-export class Cube extends Shape {
+export class Cube extends Geometry3D {
   protected readonly faces: Face[] = [
     {
       // top (y=1)

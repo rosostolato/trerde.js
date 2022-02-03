@@ -1,8 +1,8 @@
 import { Face } from '../interfaces/face.interface'
-import { Vector3 } from '../math/vector3'
-import { Object3D } from '../Object3D'
+import { Vector3 } from '../math/Vector3'
+import { Object3D } from '../TrerDe'
 
-export class Shape extends Object3D {
+export class Geometry3D extends Object3D {
   protected faces: Face[] = []
 
   getFaces() {

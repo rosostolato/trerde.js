@@ -1,4 +1,6 @@
 import { Vector3Like, Vector3obj } from '../interfaces/vector3-like.interface'
+import { Matrix } from './Matrix'
+import { d2r } from './utils'
 
 export type EulerOrder = 'XYZ' | 'XZY' | 'YZX' | 'YXZ' | 'ZXY' | 'ZYX'
 
@@ -50,11 +52,10 @@ export class Vector3 implements Vector3obj {
     z?: number,
     order?: EulerOrder
   ): Vector3 {
-    const d2r = (degress: number | string) => Number(degress) * (Math.PI / 180)
     const euler =
       xOrEuler instanceof Vector3
         ? new Vector3(d2r(xOrEuler.x), d2r(xOrEuler.y), d2r(xOrEuler.z))
-        : new Vector3(d2r(xOrEuler), d2r(yOrOrder ?? 0), d2r(z ?? 0))
+        : new Vector3(d2r(xOrEuler), d2r(Number(yOrOrder ?? 0)), d2r(z ?? 0))
     order = xOrEuler instanceof Vector3 ? (yOrOrder as EulerOrder) : order
     order ??= 'XYZ'
 
@@ -63,7 +64,7 @@ export class Vector3 implements Vector3obj {
       <T>(value: T) =>
         funcs.reduce((acc, func) => func(acc), value)
     const rotators = order.split('').map(axis => {
-      return (v: Vector3) => this.matrixRotate(v, euler, axis as any)
+      return (v: Vector3) => this.eulerRotate(v, euler, axis as any)
     })
     return pipe(...rotators)(this)
   }
@@ -73,12 +74,12 @@ export class Vector3 implements Vector3obj {
     return Math.sqrt(x * x + y * y + z * z)
   }
 
-  toMatrix3(): [[x: number], [y: number], [z: number]] {
-    return [[this.x], [this.y], [this.z]]
+  toMatrix3(): Matrix {
+    return new Matrix([this.x], [this.y], [this.z])
   }
 
-  toMatrix4(w = 1): [[x: number], [y: number], [z: number], [w: number]] {
-    return [[this.x], [this.y], [this.z], [w]]
+  toMatrix4(w = 1): Matrix {
+    return new Matrix([this.x], [this.y], [this.z], [w])
   }
 
   toString(): string {
@@ -88,42 +89,33 @@ export class Vector3 implements Vector3obj {
     return `{x: ${x}, y: ${y}, z: ${z}}`
   }
 
-  private matrixRotate(vector: Vector3, euler: Vector3, axis: 'X' | 'Y' | 'Z') {
-    const rx = [
+  private eulerRotate(vector: Vector3, euler: Vector3, axis: 'X' | 'Y' | 'Z') {
+    const rx = new Matrix(
       [1, 0, 0],
       [0, Math.cos(euler.x), -Math.sin(euler.x)],
-      [0, Math.sin(euler.x), Math.cos(euler.x)],
-    ]
-    const ry = [
+      [0, Math.sin(euler.x), Math.cos(euler.x)]
+    )
+    const ry = new Matrix(
       [Math.cos(euler.y), 0, Math.sin(euler.y)],
       [0, 1, 0],
-      [-Math.sin(euler.y), 0, Math.cos(euler.y)],
-    ]
-    const rz = [
+      [-Math.sin(euler.y), 0, Math.cos(euler.y)]
+    )
+    const rz = new Matrix(
       [Math.cos(euler.z), -Math.sin(euler.z), 0],
       [Math.sin(euler.z), Math.cos(euler.z), 0],
-      [0, 0, 1],
-    ]
+      [0, 0, 1]
+    )
     const matrices = { X: rx, Y: ry, Z: rz }
-    const mat = this.matrixMultiply(matrices[axis], vector.toMatrix3())
-    return new Vector3(mat[0][0], mat[1][0], mat[2][0])
+    const mat = matrices[axis].multiply(vector.toMatrix3())
+    return Vector3.fromMatrix(mat)
   }
 
-  private matrixMultiply(matA: number[][], matB: number[][]) {
-    const aNumRows = matA.length
-    const aNumCols = matA[0].length
-    const bNumCols = matB[0].length
-    const m: number[][] = new Array(aNumRows) // initialize array of rows
-    for (var r = 0; r < aNumRows; ++r) {
-      m[r] = new Array(bNumCols) // initialize the current row
-      for (var c = 0; c < bNumCols; ++c) {
-        m[r][c] = 0 // initialize the current cell
-        for (var i = 0; i < aNumCols; ++i) {
-          m[r][c] += matA[r][i] * matB[i][c]
-        }
-      }
+  static fromMatrix(matrix: Matrix): Vector3 | null {
+    if (matrix.rows !== 3 || matrix.cols !== 1) {
+      return null
     }
-    return m
+    const mat = matrix.toArray()
+    return new Vector3(mat[0][0], mat[1][0], mat[2][0])
   }
 
   static back = new Vector3(0, 0, -1)

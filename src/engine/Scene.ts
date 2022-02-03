@@ -1,9 +1,9 @@
-import { Shape } from './objects'
+import { Geometry3D } from './geometries'
 
 export class Scene {
-  readonly shapeObjects: Shape[] = []
+  readonly objects: Geometry3D[] = []
 
-  add(...objects: Shape[]): void {
-    this.shapeObjects.push(...objects)
+  add(...objects: Geometry3D[]): void {
+    this.objects.push(...objects)
   }
 }

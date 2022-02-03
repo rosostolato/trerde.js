@@ -9,5 +9,8 @@
     "canvas"
   ],
   "author": "rosostolato",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.5.5"
+  }
 }

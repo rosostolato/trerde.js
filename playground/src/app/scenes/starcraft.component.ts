@@ -42,8 +42,9 @@ export class StarcraftComponent implements OnInit {
     const starcraft = new Prefab(starcraftObj)
     scene.add(starcraft)
 
-    camera.position = new Vector3(0, 0, -11)
-    setInterval(() => starcraft.rotate(0, -1, 0), 1000 / 60)
+    camera.position = new Vector3(0, 5, -15)
+    camera.rotation = new Vector3(-20, 0, 0)
+    setInterval(() => starcraft.rotate(0, 0.5, 0), 1000 / 60)
 
     const resizeCanvas = () =>
       trerde.setScreenSize(window.innerWidth, window.innerHeight)

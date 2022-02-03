@@ -11,16 +11,14 @@ export class Prefab extends Model3D {
     this.materialLibraries = obj.materialLibraries
     this.models = obj.models
 
-    const colors = ['#aaa', '#bbb', '#ccc', '#ddd', '#eee', '#fff']
-
     let lastIndex = 0
-    this.faces = this.models.flatMap((model, i) => {
+    this.faces = this.models.flatMap(model => {
       const currIndex = lastIndex
-      lastIndex = model.vertices.length
+      lastIndex += model.vertices.length
       return model.faces.map(face => ({
-        color: colors[i],
+        color: '#aaa',
         vertices: face.vertices.map(
-          vertex => model.vertices[vertex.vertexIndex - currIndex]
+          vertex => model.vertices[vertex.vertexIndex - currIndex - 1]
         ),
       }))
     })
